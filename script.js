@@ -15,21 +15,21 @@ const submit = document.querySelector("[type='submit']"); // also need to turn s
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-  ctx.clearRect(0,0, canvas.width, canvas.height);
-  
-  
-  submit.disabled = false;
-  clear.disabled = true;
-  read.disabled = true;
-  
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0,0, canvas.width, canvas.height);
-  var dims = getDimmensions(canvas.width, canvas.height, img.width, img.height);
-  ctx.drawImage(img, dims.startX, dims.startY, dims.width, dims.height);
   // Some helpful tips:
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
+  ctx.clearRect(0,0, canvas.width, canvas.height);
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0,0, canvas.width, canvas.height);
+  var dims = getDimmensions(canvas.width, canvas.height, img.width, img.height);
+  ctx.drawImage(img, dims.startX, dims.startY, dims.width, dims.height);
+  
+  submit.disabled = false;
+  clear.disabled = true;
+  read.disabled = true;
+ 
+
 });
 
 
@@ -45,8 +45,8 @@ imageInput.addEventListener('change', () => {
 
 // can directly get by id.
 const generate = document.getElementById('generate-meme');
-const topText = document.getElementById('text-top');
-const bottomText = document.getElementById('text-bottom');
+const texTop = document.getElementById('text-top');
+const texBot = document.getElementById('text-bottom');
 generate.addEventListener('submit', (event) => {
     // The generated meme only occurs 1/10 second
     // After some research, we know we should add this code.
@@ -54,12 +54,12 @@ generate.addEventListener('submit', (event) => {
 
     ctx.fillStyle = "blue";
     ctx.font = 'bold 50px serif';
-    ctx.textBaseline = "top";
-    // since we want it to be centered
-    ctx.fillText(topText.value, canvas.width / 2, 10);
   
+    // texts are at the center
+    ctx.textBaseline = "top";
+    ctx.fillText(texTop.value, canvas.width / 2, 10);
     ctx.textBaseline = "bottom";
-    ctx.fillText(bottomText.value, canvas.width / 2, 390);
+    ctx.fillText(texBot.value, canvas.width / 2, 390);
     
     // after generate meme, generate is disabled and other 2 are turned on.
     submit.disabled = true;
@@ -73,6 +73,7 @@ clear.addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     topText.value = null;
     bottemText.value = null;
+  
     // no img selected, cannot submmit
     submit.disabled = false;
     clear.disabled = true;
