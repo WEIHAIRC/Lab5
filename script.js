@@ -15,15 +15,14 @@ const submit = document.querySelector("[type='submit']"); // also need to turn s
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
+  ctx.clearRect(0,0, canvas.width, canvas.height);
   
-  canvas.clearRect(0,0, canvas.width, canvas.height);
-  ctx.fillStyle = 'black';
   
   submit.disabled = false;
   clear.disabled = true;
   read.disabled = true;
   
-
+  ctx.fillStyle = 'black';
   ctx.fillRect(0,0, canvas.width, canvas.height);
   var dims = getDimmensions(canvas.width, canvas.height, img.width, img.height);
   ctx.drawImage(img, dims.startX, dims.startY, dims.width, dims.height);
@@ -35,12 +34,49 @@ img.addEventListener('load', () => {
 
 
 // image-input on change
-img.addEventListener('change', () => {
-    // load in the selected image into the Image object (img) src attribute
+imageInput.addEventListener('change', () => {
     img.src = URL.createObjectURL(imageInput.files[0]);
+    img.onload = function () {
+      URL.revokeObjectURL(img.src);
+    };
+    img.alt = imageInput.files[0];
+});
 
-    // set the image alt attribute by extracting the image file name from the file path
-    img.alt = img.src.split('\\').pop().split('/').pop();
+
+// can directly get by id.
+const generate = document.getElementById('generate-meme');
+const topText = document.getElementById('text-top');
+const bottomText = document.getElementById('text-bottom');
+generate.addEventListener('submit', (event) => {
+    // The generated meme only occurs 1/10 second
+    // After some research, we know we should add this code.
+    event.preventDefault();
+
+    ctx.fillStyle = "blue";
+    ctx.font = 'bold 50px serif';
+    ctx.textBaseline = "top";
+    // since we want it to be centered
+    ctx.fillText(topText.value, canvas.width / 2, 10);
+  
+    ctx.textBaseline = "bottom";
+    ctx.fillText(bottomText.value, canvas.width / 2, 390);
+    
+    // after generate meme, generate is disabled and other 2 are turned on.
+    submit.disabled = true;
+    clear.disabled = false;
+    read.disabled = false;
+})
+
+
+// clear button: clean up and change button
+clear.addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    topText.value = null;
+    bottemText.value = null;
+    // no img selected, cannot submmit
+    submit.disabled = false;
+    clear.disabled = true;
+    read.disabled = true;
 });
 
 /**
