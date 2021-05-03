@@ -134,7 +134,7 @@ read.addEventListener('click', () => {
     // event.preventDefault();
 
     var toRead = new SpeechSynthesisUtterance(texTop.value + texBot.value);
-    var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+    var selectedOption = selectedVoice.selectedOptions[0].getAttribute('data-name');
     for (var i = 0; i < voices.length; i++) {
       if (voices[i].name === selectedOption) {
         toRead.voice = voices[i];
