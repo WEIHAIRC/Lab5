@@ -2,14 +2,14 @@
 
 const img = new Image(); // used to load image from <input> and draw to canvas
 
-// new consts here:
+// canvs and context
 const canvas = document.getElementById('user-image');
 const ctx = canvas.getContext('2d');
 
-// image
+// image input
 var imageInput = document.getElementById("image-input");
 
-// buttons
+// buttons 
 const clear = document.querySelector("[type='reset']");
 const read = document.querySelector("[type='button']");
 const selectedVoice = document.getElementById('voice-selection');
@@ -18,32 +18,37 @@ const submit = document.querySelector("[type='submit']"); // also need to turn s
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-   
+
   // Some helpful tips:
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
 
+  // clear the context and fill it with black
   ctx.clearRect(0,0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
   ctx.fillRect(0,0, canvas.width, canvas.height);
   var dims = getDimmensions(canvas.width, canvas.height, img.width, img.height);
   ctx.drawImage(img, dims.startX, dims.startY, dims.width, dims.height);
 
+  // when loading image, submit can be used, but clear and read are not
   submit.disabled = false;
   clear.disabled = true;
   read.disabled = true;
+  
 
 });
+
 
 // image-input on change
 imageInput.addEventListener('change', () => {
     img.src = URL.createObjectURL(imageInput.files[0]);
+
     img.alt = imageInput.files[0];
 });
 
 
-// can directly get by id.
+// texts generated
 const generate = document.getElementById('generate-meme');
 const texTop = document.getElementById('text-top');
 const texBot = document.getElementById('text-bottom');
@@ -54,8 +59,9 @@ generate.addEventListener('submit', (event) => {
 
     ctx.fillStyle = "blue";
     ctx.font = 'bold 50px serif';
+
+    // generated text is on center
     ctx.textBaseline = "top";
-    // since we want it to be centered
     ctx.fillText(texTop.value, canvas.width / 2, 10);
   
     ctx.textBaseline = "bottom";
@@ -77,7 +83,7 @@ clear.addEventListener('click', () => {
     submit.disabled = false;
     clear.disabled = true;
     read.disabled = true;
-}); 
+});
 
 
 // Helper function populateVoiceList
@@ -112,18 +118,20 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
 // (I guess people will adjust volume before clicking read.)
 const volGroup = document.getElementById('volume-group');
 const icon = document.querySelector("[alt='Volume Level 3']");
-const volumeValue = document.querySelector("[type='range']");
+const volRange = document.querySelector("[type='range']");
 volGroup.addEventListener('input', () => {
-    if (volumeValue.value <= 100 && volumeValue.value >= 67) {
+    let tempVol = volRange.value;
+
+    if (tempVol <= 100 && tempVol >= 67) {
       icon.src = "icons/volume-level-3.svg";
     }
-    else if (volumeValue.value >= 34 && volumeValue.value <= 66) {
+    else if (tempVol >= 34 && tempVol <= 66) {
       icon.src = "icons/volume-level-2.svg";
     }
-    else if (volumeValue.value >= 1 && volumeValue.value <= 33) {
+    else if (tempVol >= 1 && tempVol <= 33) {
       icon.src = "icons/volume-level-1.svg";
     }
-    else if (volumeValue.value == 0) {
+    else if (tempVol == 0) {
       icon.src = "icons/volume-level-0.svg";
     }
 })
@@ -140,13 +148,11 @@ read.addEventListener('click', () => {
         toRead.voice = voices[i];
       }
     }
-    toRead.volume = volumeValue.value /100 ; // volume should be 0-1
+    toRead.volume = volRange.value /100 ; // volume should be 0-1
     synth.speak(toRead);
     texTop.blur();
     texBot.blur();
 })
-
-
 
 /**
  * Takes in the dimensions of the canvas and the new image, then calculates the new
@@ -187,3 +193,4 @@ function getDimmensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
 
   return { 'width': width, 'height': height, 'startX': startX, 'startY': startY }
 }
+
