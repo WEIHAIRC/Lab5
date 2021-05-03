@@ -1,11 +1,11 @@
 # CSE110 SP21 Lab 5
 
 ## Author(s):
-- YOUR NAME
-
+- Haoxuan Wang
+- Yang Yue
 ## Part 1:
 
-LINK TO YOUR PUBLISHED SITE
+https://thomaswang0822.github.io/Lab5/
 
 ## Part 2:
 
